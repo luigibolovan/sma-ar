@@ -1,8 +1,5 @@
 package ro.ac.upt.christmasarsample
 
-import android.app.Activity
-import android.app.ActivityManager
-import android.content.Context
 import android.net.Uri
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -32,7 +29,12 @@ class AugmentedActivity : AppCompatActivity() {
 
         arFragment = supportFragmentManager.findFragmentById(R.id.scf_central) as ArFragment
 
-        TODO("2. Invoke addRenderableToScene once a tap is executed over the AR plane")
+//        TODO("2. Invoke addRenderableToScene once a tap is executed over the AR plane")
+
+        arFragment.setOnTapArPlaneListener { hitResult, plane, motionEvent ->
+                val anchor = hitResult.createAnchor()
+                addRenderableToScene(anchor, renderable)
+        }
 
 
     }
@@ -40,20 +42,30 @@ class AugmentedActivity : AppCompatActivity() {
     private fun initRenderableModel() {
         val modelUri = Uri.parse("model.sfb")
 
-        TODO("1. Init model renderable variable")
-
-
+//        TODO("1. Init model renderable variable")
+        ModelRenderable.builder()
+            .setSource(this, modelUri)
+            .build()
+            .thenAccept{renderable = it}
+            .exceptionally {
+                Toast.makeText(this, "Cannot load renderable", Toast.LENGTH_LONG)
+                null
+            }
     }
 
-    private fun addRenderableToScene(anchor: Anchor, renderable: Renderable) {
-        TODO("3. Build an anchor node and set the AR scene to be its parent")
+    private fun addRenderableToScene(anchor: Anchor, renderable: Renderable?) {
+//        TODO("3. Build an anchor node and set the AR scene to be its parent")
+        val aNode = AnchorNode(anchor)
+        aNode.setParent(arFragment.arSceneView.scene)
+
+//        TODO("4. Build an transformable node and set the previously anchor node to be its parent")
+        val tNode = TransformableNode(arFragment.transformationSystem)
+        tNode.setParent(aNode)
 
 
-        TODO("4. Build an transformable node and set the previously anchor node to be its parent")
 
-
-        TODO("5. Assign node's renderable property to previously loaded renderable")
-
+//        TODO("5. Assign node's renderable property to previously loaded renderable")
+        tNode.renderable = renderable
 
     }
 
